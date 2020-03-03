@@ -12,10 +12,9 @@ from .forms import speakForm
 # Create your views here.
 
 def viewIndex(request):  
-    print(request.session.keys())
     if 'response' in request.session: del request.session['response']
     if 'recorded' in request.session: del request.session['recorded']
-    else: print(False)
+    
     form = speakForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
@@ -31,13 +30,13 @@ def viewIndex(request):
 
 def viewRecord(request):
     if 'response' in request.session:
-        Utterances = Utterance.objects.filter(active=True).order_by('count')[:4]
-        
+        utterance = Utterance.objects.filter(active=True).order_by('count').first()
+        # utterance = Utterance.objects.filter(active=True).order_by('count')[:4]
         context = {
             'title': "Record",
             'page': "speak",
             'response': request.session['response'],
-            'utterance': Utterances[randint(0, len(Utterances)-1)]
+            'utterance': utterance #[randint(0, len(Utterances)-1)]
         }
         return render(request, 'speak/record.html', context)
     else: return redirect('speak')
@@ -55,7 +54,6 @@ def saveRecord(request):
         utterance = Utterance.objects.get(code=request.POST['utterance'])
         utterance.count += 1
         utterance.save()
-        print(utterance)
 
     data = {
         'name': request.POST['name'],
