@@ -88,6 +88,8 @@ local_settings.py
 .env
 staticfiles/
 letsencrypt/
-
+static/admin/
+static/import_export/
+assets/audio/
 ### Google ####
 googleservice.json
