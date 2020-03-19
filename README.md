@@ -15,31 +15,38 @@ Website ini dibuat di sistem operasi *Ubuntu 18.04* dengan bahasa pemrograman *P
     Website mendukung pengelolaan data yang ada sebagai administrator seperti data kalimat, jenis kelamin, kategori umur, suku dan dialek. Fitur ini dilengkapi dengan fungsi dasar seperti menambah, melihat, mengubah, dan menghapus data. Selain itu, fitur ini juga dilengkapi dengan fungsi pencarian, filtering dan import export data.
 
 ## Instalasi
-1. Buat virtual environment untuk Python 3.6 dan aktifkan.
+1. Install dependensi berikut.
+    ```
+    $ sudo apt-get install libpq-dev python-dev
+    ```
+
+2. Buat virtual environment untuk Python 3.6 dan aktifkan.
     ```
     $ virtualenv -p python3.6 env
     $ source env/bin/activate
     ```
 
-2. Install semua library yang diperlukan.
+3. Install semua library yang diperlukan.
     ```
     $ pip install -r requirements.txt
     ```
 
-3. Lakukan migrasi awal untuk django-model.
+4. Lakukan migrasi awal untuk django-model.
     ```
     $ python manage.py migrate
     ```
 
-4. Buat superuser sebagai django-admin pertama.
+5. Buat superuser sebagai django-admin pertama.
     ```
     $ python manage.py createsuperuser
     ```
-5. Jalankan server website dan akses `http://localhost:<port>` secara lokal.
+
+6. Jalankan server website dan akses `http://localhost:<port>` secara lokal.
     ```
     $ python manage.py runserver
     ```
-6. Opsi lain untuk menjalankan server website melalui jaringan pribadi.
+
+7. Opsi lain untuk menjalankan server website melalui jaringan pribadi.
     ```
     $ python manage.py runsslserver <ip_address>:<port>
     ```

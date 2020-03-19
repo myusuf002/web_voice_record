@@ -14,6 +14,7 @@ from .forms import speakForm
 def viewIndex(request):  
     if 'response' in request.session: del request.session['response']
     if 'recorded' in request.session: del request.session['recorded']
+    request.session['count_record'] = 0
     
     form = speakForm(request.POST or None)
     if request.method == 'POST':
@@ -35,6 +36,7 @@ def viewRecord(request):
         context = {
             'title': "Record",
             'page': "speak",
+            'count_record': request.session['count_record'],
             'response': request.session['response'],
             'utterance': utterance #[randint(0, len(Utterances)-1)]
         }
@@ -43,6 +45,7 @@ def viewRecord(request):
 
 def saveRecord(request):
     request.session['recorded'] = 1
+    request.session['count_record'] += 1
     print("... save record ...")
     audio_data = request.FILES['audio']
     audio_name = request.POST['name']
@@ -91,6 +94,7 @@ def doneRecord(request):
         dialect.count += 1
         dialect.save()
 
+    del request.session['count_record']
     del request.session['response']
     del request.session['recorded']
     return redirect('speak')
