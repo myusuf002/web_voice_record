@@ -1,0 +1,22 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block css %}  
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row px-3 pt-3">
+        <div class="col-md-5 my-5 mx-auto text-center">
+            <h1 class="bg-light border p-3 rounded text-center">Thank you for recording with us!</h1>
+            <small>Voice Team - ATR</small>
+            <br/>
+            <a href="{% url 'record' %}" class="btn btn-block btn-danger text-white mt-5">Do Another Record</a>
+        </div>
+    </div>        
+</div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}

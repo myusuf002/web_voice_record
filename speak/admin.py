@@ -1,7 +1,22 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
+
+from .models import Record
+class RecordAdmin(admin.ModelAdmin):
+
+    def audio_tag(self, obj):
+        return format_html('<audio controls="" src="{}"></audio>'.format(obj.audio.url))
+
+    audio_tag.short_description = 'Audio'
+
+    list_display = ('id', 'utterance', 'gender', 'age', 'ethnic', 'dialect', 'count_good', 'count_bad')
+    search_fields = ['code', 'utterance', 'gender', 'age', 'ethnic', 'dialect',]
+  
+admin.site.register(Record, RecordAdmin)
+
 
 from .models import Utterance
 class UtteranceResource(resources.ModelResource):
