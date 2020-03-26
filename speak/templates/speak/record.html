@@ -6,32 +6,6 @@
 
 {% block content %}
 
-
-<div class="pr-2 pb-4" data-toggle="tooltip" data-placement="bottom" title="Click for instructions" style="position:fixed;right:10;bottom:0;">
-<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalHelp">
-    Help
-</button>
-</div>
-
-<div class="modal fade bd-example-modal-lg" id="modalHelp" tabindex="-1" role="dialog" aria-labelledby="modalHelpTitle" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-    <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="modalHelpTitle">Instructions</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body text-left">
-        {{ instructions|safe }}
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
-    </div>
-    </div>
-</div>
-
-</div>
 <div class="alert alert-warning alert-dismissible fixed-top m-5 fade" role="alert" id="saveAlert">
     <strong>The recording has been saved!</strong> Please continue recording with us.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -66,7 +40,7 @@
                 </button>
             </div>
             <img id="recordProcess" class="mx-auto d-none" src="{% static 'recording.gif' %}" height="50px"/>
-            <div class="mx-auto mt-2 " id="recordResult"></div>
+            <div class="mx-auto mt-2 table-responsive" id="recordResult"></div>
             <div class="col-md-4 p-0 mx-auto" id="saveDiv">
                 {% comment %} <a class="btn btn-block btn-danger text-white px-3 mt-4">Save</a> {% endcomment %}
             </div>
@@ -91,6 +65,7 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block js %}

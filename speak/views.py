@@ -11,6 +11,16 @@ from django import forms
 from .models import Record, Configuration, Utterance, Gender, Age, Ethnic, Dialect
 from .forms import speakForm
 
+if Configuration.objects.filter(code='min_record').exists(): 
+    conf_min = Configuration.objects.filter(code='min_record').first()
+    min_record = int(conf_min.text)
+else: min_record = 10
+
+if Configuration.objects.filter(code='instructions').exists(): 
+    conf_ins = Configuration.objects.filter(code='instructions').first()
+    instructions = conf_ins.text
+else: instructions = "Nothing Here"
+
 # Create your views here.
 def viewIndex(request):  
     if 'response' in request.session: del request.session['response']
@@ -26,6 +36,7 @@ def viewIndex(request):
     context = {
         'title': "Speak",
         'page': "speak",
+        'instructions': instructions,
         'form': form
     }
     return render(request, 'speak/index.html', context)
@@ -34,16 +45,6 @@ def viewRecord(request):
     if 'response' in request.session:
         utterance = Utterance.objects.filter(active=True).order_by('count').first()
         # utterance = Utterance.objects.filter(active=True).order_by('count')[:4]
-        if Configuration.objects.filter(code='min_record').exists(): 
-            conf_min = Configuration.objects.filter(code='min_record').first()
-            min_record = int(conf_min.text)
-        else: min_record = 10
-
-        if Configuration.objects.filter(code='instructions').exists(): 
-            conf_ins = Configuration.objects.filter(code='instructions').first()
-            instructions = conf_ins.text
-        else: instructions = "Nothing Here"
-        
         context = {
             'title': "Record",
             'page': "speak",
@@ -124,7 +125,8 @@ def doneRecord(request):
         del request.session['recorded']
         context = {
             'title': "Thanks",
-            'page': "speak"
+            'page': "speak",
+            'instructions': instructions,
         }
         return render(request, 'speak/thanks.html', context)
 
