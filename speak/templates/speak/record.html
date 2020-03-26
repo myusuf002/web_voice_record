@@ -48,7 +48,7 @@
     <div class="row px-3">
         <div class="col-md-8 text-center text-md-right my-3">   
                 {% comment %} <button class="btn btn-outline-danger px-3 mr-3" onClick="window.location.reload()">Next</button> {% endcomment %}
-                {% if count_record >= 1 %}
+                {% if count_record >= 5 %}
                     <form class="p-0 ml-auto col-md-2" action="{% url 'done_record' %}" method="POST">
                         {% csrf_token %}                
                         <input type="hidden" name="gender" value="{{ response.gender }}">
@@ -59,7 +59,7 @@
                     </form>
                 {% else %}
                     <span class="mr-2">number of recordings:</span>
-                    <span class="btn btn-light border" style="min-width:75px;">{{ count_record }}/10</span>
+                    <span class="btn btn-light border" style="min-width:75px;">{{ count_record }}/5</span>
                 {% endif %}
         </div>
     </div>
