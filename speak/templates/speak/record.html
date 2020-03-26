@@ -6,14 +6,14 @@
 
 {% block content %}
 
-<div class="alert alert-warning alert-dismissible fixed-top m-5 fade" role="alert" id="saveAlert">
+<div class="alert alert-warning alert-dismissible fixed-top m-5 fade d-none" role="alert" id="saveAlert">
     <strong>The recording has been saved!</strong> Please continue recording with us.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
-<div class="alert alert-warning alert-dismissible fixed-top m-5 fade" role="alert" id="cantsaveAlert">
+<div class="alert alert-warning alert-dismissible fixed-top m-5 fade d-none" role="alert" id="cantsaveAlert">
     <strong>The recording can't been saved!</strong> Please try again.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
@@ -121,8 +121,7 @@
         recordButton.classList.add("d-none");
         stopButton.classList.remove("d-none");
         // saveButton.classList.add("d-none");
-        saveAlert.classList.remove("show");
-        
+            
 
         /*
             We're using the standard promise based getUserMedia() 
@@ -230,6 +229,7 @@
                 contentType: false,
                 success: function (data) {
                     console.log('response' + JSON.stringify(data));
+                    saveAlert.classList.remove("d-none");
                     saveAlert.classList.add("show");
                     setTimeout(function(){window.location.reload()}, 3000);
                     // saveButton.classList.add("disabled");
@@ -237,6 +237,7 @@
                 error: function () {
                 // handle error case here
                     console.log('Error save record');
+                    cantsaveAlert.classList.remove("d-none");
                     cantsaveAlert.classList.add("show");
                 },
                 
