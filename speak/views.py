@@ -31,7 +31,7 @@ def viewIndex(request):
     if request.method == 'POST':
         if form.is_valid():
             request.session['response'] = form.cleaned_data
-            return redirect('record')
+            return redirect('instructions')
         
     context = {
         'title': "Speak",
@@ -40,6 +40,14 @@ def viewIndex(request):
         'form': form
     }
     return render(request, 'speak/index.html', context)
+
+def viewInstructions(request):     
+    context = {
+        'title': "Speak",
+        'page': "speak",
+        'instructions': instructions,
+    }
+    return render(request, 'speak/instructions.html', context)
 
 def viewRecord(request):
     if 'response' in request.session:
@@ -51,6 +59,7 @@ def viewRecord(request):
             'min_record': min_record,
             'instructions': instructions,
             'count_record': request.session['count_record'],
+            'recorded': 'recorded' in request.session,
             'response': request.session['response'],
             'utterance': utterance #[randint(0, len(Utterances)-1)]
         }

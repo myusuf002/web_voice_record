@@ -1,0 +1,24 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block css %}  
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row p-3 mt-3">
+        <div class="col-md-10 mx-auto p-1" style="height:auto;max-height:55vh;overflow:auto;">
+            {{ instructions|safe }}
+        </div>
+    </div>    
+    <div class="row p-3">
+        <div class="col-md-10 mx-auto p-1 ">
+            <a href="{% url 'record' %}" class="btn btn-danger text-white px-3 float-right mt-3">Next</a>    
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}
