@@ -93,5 +93,5 @@ static/import_export/
 assets/audio/
 ### Google ####
 googleservice.json
-#db.sqlite3
+db.sqlite3
 
