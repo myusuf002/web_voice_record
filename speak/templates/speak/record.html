@@ -6,6 +6,32 @@
 
 {% block content %}
 
+
+<div class="pr-2 pb-4" data-toggle="tooltip" data-placement="bottom" title="Click for instructions" style="position:fixed;right:10;bottom:0;">
+<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalHelp">
+    Help
+</button>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="modalHelp" tabindex="-1" role="dialog" aria-labelledby="modalHelpTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="modalHelpTitle">Instructions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body text-left">
+        {{ instructions|safe }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+    </div>
+    </div>
+</div>
+
+</div>
 <div class="alert alert-warning alert-dismissible fixed-top m-5 fade" role="alert" id="saveAlert">
     <strong>The recording has been saved!</strong> Please continue recording with us.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -22,11 +48,12 @@
 
 <div class="container">
     <div class="row px-3 pt-3">
-        <div class="col-md-8 mt-2 text-center">
+        <div class="col-md-8 text-center">
             <h3>{{ title }}</h3>
             <h5>Read this sentence:</h5> 
             <h3 id="utterance" class="bg-light border p-3 rounded text-center">{{ utterance.text }}</h3>
             <small>{{ utterance.code|upper }}_{{ response.name|slice:':3'|upper }}_{{ response.gender.code |upper }}_{{ response.age.code|upper }}_{{ response.ethnic.code|upper }}_{{ response.dialect.code|upper }}</small>
+            
         </div>
         <div class="col-md-4 text-center">
             <div id="formats">Format: start recording to see sample rate</div>
@@ -48,7 +75,7 @@
     <div class="row px-3">
         <div class="col-md-8 text-center text-md-right my-3">   
                 {% comment %} <button class="btn btn-outline-danger px-3 mr-3" onClick="window.location.reload()">Next</button> {% endcomment %}
-                {% if count_record >= 5 %}
+                {% if count_record >= min_record %}
                     <form class="p-0 ml-auto col-md-2" action="{% url 'done_record' %}" method="POST">
                         {% csrf_token %}                
                         <input type="hidden" name="gender" value="{{ response.gender }}">
@@ -59,11 +86,10 @@
                     </form>
                 {% else %}
                     <span class="mr-2">number of recordings:</span>
-                    <span class="btn btn-light border" style="min-width:75px;">{{ count_record }}/5</span>
+                    <span class="btn btn-light border" style="min-width:75px;">{{ count_record }}/{{ min_record }}</span>
                 {% endif %}
         </div>
     </div>
-        
 </div>
 {% endblock %}
 

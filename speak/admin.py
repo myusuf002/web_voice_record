@@ -17,6 +17,17 @@ class RecordAdmin(admin.ModelAdmin):
   
 admin.site.register(Record, RecordAdmin)
 
+from .models import Configuration
+class ConfigurationResource(resources.ModelResource):
+    class Meta:
+        model = Configuration
+
+class ConfigurationAdmin(ImportExportModelAdmin):
+    list_display = ("code", "text")
+    search_fields = ['code', 'text']
+    resource_class = ConfigurationResource
+admin.site.register(Configuration, ConfigurationAdmin)
+
 
 from .models import Utterance
 class UtteranceResource(resources.ModelResource):

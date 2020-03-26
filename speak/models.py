@@ -1,5 +1,10 @@
 from django.db import models
 # Create your models here.
+class Configuration(models.Model):
+    code = models.CharField(max_length=32, blank=True, null=True, unique=True)
+    text = models.TextField(blank=True, null=True)
+    def __str__(self): return self.code
+
 class Record(models.Model):
     code = models.CharField(max_length=512, blank=True, null=True, unique=True)
     utterance = models.CharField(max_length=512, blank=True, null=True)

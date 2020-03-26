@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django import forms
 
-from .models import Record, Utterance, Gender, Age, Ethnic, Dialect
+from .models import Record, Configuration, Utterance, Gender, Age, Ethnic, Dialect
 from .forms import speakForm
 
 # Create your views here.
@@ -34,9 +34,21 @@ def viewRecord(request):
     if 'response' in request.session:
         utterance = Utterance.objects.filter(active=True).order_by('count').first()
         # utterance = Utterance.objects.filter(active=True).order_by('count')[:4]
+        if Configuration.objects.filter(code='min_record').exists(): 
+            conf_min = Configuration.objects.filter(code='min_record').first()
+            min_record = int(conf_min.text)
+        else: min_record = 10
+
+        if Configuration.objects.filter(code='instructions').exists(): 
+            conf_ins = Configuration.objects.filter(code='instructions').first()
+            instructions = conf_ins.text
+        else: instructions = "Nothing Here"
+        
         context = {
             'title': "Record",
             'page': "speak",
+            'min_record': min_record,
+            'instructions': instructions,
             'count_record': request.session['count_record'],
             'response': request.session['response'],
             'utterance': utterance #[randint(0, len(Utterances)-1)]
