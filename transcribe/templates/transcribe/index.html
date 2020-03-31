@@ -1,0 +1,249 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row px-3 pt-3">
+        
+        <div class="col-md-8 mb-3">    
+            <div class="text-center"><h3>{{ title }}</h3></div>
+            <div class="row px-0 px-sm-5">
+                <div class="mx-3">language: </div>
+                
+                    <select id="langTranscribe">
+                        {% for language in languages %}
+                            <option value="{{ language.code }}">{{ language.name|title }}</option>
+                        {% endfor %}
+                    </select> 
+            </div>
+            
+            <div class="row px-0 px-sm-5 mb-2">
+                <div class="mx-3">result: </div>
+                <div class="d-none" id="transcribe">
+                    transcribing <img src="{% static 'ajax-loader.gif' %}"/>
+                </div>
+            </div>
+            <div class="px-0 px-sm-5">
+                <textarea id="texTranscribe" class="form-control" rows=5></textarea>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 text-center">    
+            <div id="formats" class="">Format: start recording to see sample rate</div>
+            <div id="controls" class="mt-2">
+                <button class="btn btn-danger rounded-circle m-1" style="width:75px;height:75px" id="recordButton">
+                    <i class="fas fa-microphone fa-2x"></i>
+                </button>
+                <button class="btn btn-danger rounded-circle m-1 d-none" style="width:75px;height:75px" id="stopButton">
+                    <i class="fa fa-stop fa-2x"></i>
+                </button>
+            </div>
+            <img id="recordProcess" class="mx-auto d-none" src="{% static 'recording.gif' %}" height="50px"/>
+            <div class="mx-auto mt-2 table-responsive" id="recordResult"></div>
+            <div class="col-md-4 p-0 mx-auto" id="saveDiv"></div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'recorder.js' %}"></script>
+<script>
+    //webkitURL is deprecated but nevertheless
+    URL = window.URL || window.webkitURL;
+
+    var gumStream; 						//stream from getUserMedia()
+    var rec; 							//Recorder.js object
+    var input; 							//MediaStreamAudioSourceNode we'll be recording
+
+    // shim for AudioContext when it's not avb. 
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    var audioContext //audio context to help us record
+
+    var langTranscribe = document.getElementById("langTranscribe");
+    var textTranscribe = document.getElementById("texTranscribe");
+    var waitTranscribe = document.getElementById("transcribe");
+
+    var recordButton = document.getElementById("recordButton");
+    var stopButton = document.getElementById("stopButton");
+    
+    var saveDiv = document.getElementById("saveDiv");
+    
+
+    // var saveAlert = document.getElementById("saveAlert");
+    // var cantsaveAlert = document.getElementById("cantsaveAlert");
+    
+    //add events to those 2 buttons
+    recordButton.addEventListener("click", startRecording);
+    stopButton.addEventListener("click", stopRecording);
+
+
+    function startRecording() {
+        console.log("recordButton clicked");
+
+        /*
+            Simple constraints object, for more advanced audio features see
+            https://addpipe.com/blog/audio-constraints-getusermedia/
+        */
+        
+        var constraints = { audio: true, video:false }
+
+        /*
+            Disable the record button until we get a success or fail from getUserMedia() 
+        */
+
+        recordButton.classList.add("d-none");
+        stopButton.classList.remove("d-none");
+        // saveButton.classList.add("d-none");
+        // saveAlert.classList.remove("show");
+        
+
+        /*
+            We're using the standard promise based getUserMedia() 
+            https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+        */
+
+        navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+            console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
+
+            /*
+                create an audio context after getUserMedia is called
+                sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
+                the sampleRate defaults to the one set in your OS for your playback device
+
+            */
+            audioContext = new AudioContext();
+
+            recordProcess.classList.remove("d-none");
+
+            //update the format 
+            document.getElementById("formats").innerHTML="Format: 1 channel pcm @ "+audioContext.sampleRate/1000+"kHz"
+
+            /*  assign to gumStream for later use  */
+            gumStream = stream;
+            
+            /* use the stream */
+            input = audioContext.createMediaStreamSource(stream);
+
+            /* 
+                Create the Recorder object and configure to record mono sound (1 channel)
+                Recording 2 channels  will double the file size
+            */
+            rec = new Recorder(input,{numChannels:1})
+
+            //start the recording process
+            rec.record()
+
+            console.log("Recording started");
+
+        }).catch(function(err) {
+            //enable the record button if getUserMedia() fails
+            recordButton.disabled = false;
+            stopButton.disabled = true;
+        });
+    }
+
+    function stopRecording() {
+        console.log("stopButton clicked");
+
+        //disable the stop button, enable the record too allow for new recordings
+        stopButton.classList.add("d-none");
+        recordProcess.classList.add("d-none");
+        recordButton.classList.remove("d-none");
+        // saveButton.classList.remove("d-none");
+        // saveButton.classList.remove("disabled");
+        
+
+        //tell the recorder to stop the recording
+        rec.stop();
+
+        //stop microphone access
+        gumStream.getAudioTracks()[0].stop();
+
+        //create the wav blob and pass it on to createDownloadLink
+        rec.exportWAV(createRecordResult)
+    }
+
+    function createRecordResult(blob) {
+        var recordResult = document.getElementById("recordResult");
+        while(recordResult.firstChild){
+            recordResult.removeChild(recordResult.firstChild);
+        }
+        while(saveDiv.firstChild){
+            saveDiv.removeChild(saveDiv.firstChild);
+        }
+        
+        var url = URL.createObjectURL(blob);
+        var au = document.createElement('audio');
+        
+        var filename = new Date().toISOString().slice(0, 19).replace('T', '_').replace(':', '-').replace(':', '-');
+        
+        var saveButton = document.createElement('a');
+        saveButton.classList.add("btn");
+        saveButton.classList.add("btn-block");
+        saveButton.classList.add("btn-danger");
+        saveButton.classList.add("text-white");
+        saveButton.classList.add("mt-2");
+        saveButton.classList.add("px-0");
+        saveButton.innerHTML = 'Transcribe'; 
+        saveButton.href = "#";
+        saveButton.addEventListener("click", function(event){
+            var form = new FormData();
+            form.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            form.append('name', filename+".wav");
+            form.append('rate', audioContext.sampleRate);
+            form.append('lang', langTranscribe.options[langTranscribe.selectedIndex].value);
+            form.append('audio', blob);
+            
+            $.ajax({
+                url: "{% url 'save_transcribe' %}",
+                type: 'POST',
+                data: form,
+                processData: false,
+                contentType: false,
+                beforeSend: function() { waitTranscribe.classList.remove('d-none'); },
+                success: function (data) {
+                    console.log('response: ' + JSON.stringify(data));
+                    textTranscribe.value += data.transcribe;
+                    while(saveDiv.firstChild){
+                        saveDiv.removeChild(saveDiv.firstChild);
+                    }
+                    var recordResult = document.getElementById("recordResult");
+                    while(recordResult.firstChild){
+                        recordResult.removeChild(recordResult.firstChild);
+                    }
+                    waitTranscribe.classList.add('d-none');
+                    // setTimeout(function(){window.location.reload()}, 3000);
+                    // saveButton.classList.add("disabled");
+                },
+                error: function () {
+                // handle error case here
+                    console.log('Error save record');
+                    // cantsaveAlert.classList.add("show");
+                },
+                
+            });        
+        })
+        saveDiv.appendChild(saveButton);
+        //add controls to the <audio> element
+        au.controls = true;
+        au.src = url;
+        hr_top = document.createElement('hr');
+        hr_btm = document.createElement('hr');
+        hr_top.classList.add("mb-1");
+        hr_btm.classList.add("mt-1");
+        recordResult.appendChild(hr_top);
+        recordResult.appendChild(au);
+        recordResult.appendChild(hr_btm);
+    }
+
+</script>
+{% endblock %}

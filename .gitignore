@@ -91,6 +91,10 @@ letsencrypt/
 static/admin/
 static/import_export/
 assets/audio/
+assets/transcribe/
+assets/lm/
+assets/model/
+assets/trie/
 ### Google ####
 googleservice.json
 db.sqlite3

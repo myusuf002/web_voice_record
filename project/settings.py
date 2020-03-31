@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'import_export',
     'speak',
     'listen',
+    'transcribe'
 ]
 
 MIDDLEWARE = [
@@ -89,20 +90,6 @@ DATABASES = {
 
 prod_db  =  dj_database_url.config()
 DATABASES['default'].update(prod_db)
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'zt3heg4scn',
-#         'USER': 'zt3heg4scn',
-#         'PASSWORD': 'ULglQDCOaI',
-#         'HOST': 'remotemysql.com',
-#         'PORT': '3306',
-#     }
-# }
-
-# Password validation
-# https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {

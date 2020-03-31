@@ -20,12 +20,13 @@ from django.conf.urls.static import static
 
 from speak import urls as speak_urls
 from listen import urls as listen_urls
-
+from transcribe import urls as transcribe_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(speak_urls)),
     path('', include(listen_urls)),
+    path('', include(transcribe_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = " Voice"
